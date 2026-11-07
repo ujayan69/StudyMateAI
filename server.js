@@ -2,10 +2,13 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
-
+import path from 'path';s
+import { fileURLToPath } from 'url';
 dotenv.config();
 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const PORT = process.env.PORT || 3001;
 const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 
@@ -177,7 +180,17 @@ Make sure there are exactly four options and only one correct answer per questio
     res.status(500).json({ error: 'Could not generate the quiz. Please try again.' });
   }
 });
+// Serve the React frontend
+app.use(express.static(path.join(__dirname, 'dist')));
 
+// Handle website routes
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    return next();
+  }
+
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
 app.listen(PORT, () => {
   console.log(`StudyMate AI backend running at http://localhost:${PORT}`);
 });
