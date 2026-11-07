@@ -184,7 +184,7 @@ Make sure there are exactly four options and only one correct answer per questio
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Handle website routes
-app.get('*', (req, res, next) => {
+app.get('/{*splat}', (req, res, next) => {
   if (req.path.startsWith('/api/')) {
     return next();
   }
